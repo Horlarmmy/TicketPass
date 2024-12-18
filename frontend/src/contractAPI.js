@@ -1,0 +1,140 @@
+'use client';
+import { ethers } from "ethers";
+import { abi } from "./TicketPass.json";
+
+const contractAddress = '0xCa6cA1A7e23cc402bdC6C2e5AcE6B065168Bbbbc';
+const provider = new ethers.BrowserProvider(window.ethereum, "any");
+const signer = await provider.getSigner();
+console.log(signer)
+const ticketPassContract = new ethers.Contract(contractAddress, abi, signer);
+
+
+export const fetchEventsFromContract = async () => {
+  try {
+    let fetchedEvents = [];
+
+    const ticketPassEvents = await ticketPassContract.getAllticketPasses();
+    console.log(ticketPassEvents)
+    for (let i = 0; i < ticketPassEvents.length; i++) {
+      const event = ticketPassEvents[i]
+      let metadata;
+      try {
+        metadata = JSON.parse(event.metadata);
+      } catch (error) {
+        console.error(`Invalid metadata for event ${i}:`, error);
+        continue; // Skip this event if metadata is not valid JSON
+      }
+      console.log(metadata)
+      const transformedEvent = {
+        id: i, 
+        title: metadata.title, 
+        date: '9th Nov', 
+        startTime: event[7], 
+        endTime: event[8], 
+        location: metadata.location, 
+        imageUrl: metadata.media, 
+        description: metadata.description, 
+        category: event.category,  
+        moreInformation: metadata.moreInformation, 
+        ticketPrice: event[6], 
+        maxTickets: event[5], 
+        ticketsSold: event[4], 
+        registered: true,
+        host: event[0], 
+      };
+
+      fetchedEvents.push(transformedEvent);
+    }
+
+    console.log(fetchedEvents);
+    return fetchedEvents;
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return [];
+  }
+};
+
+export const createEvent = async (
+  formData
+) => {
+  try {
+    const metadata = {
+        title: formData.eventName,
+        description: formData.description,
+        moreInformation: formData.moreInformation,
+        media: "https://example.com/event-image.jpg",
+        location: formData.location,
+    };
+
+    const metadataString = JSON.stringify(metadata);
+
+    const createTx = await ticketPassContract.createticketPass(
+        formData.availableSeats, // maxPasses
+        200000000n, // passPrice in ethers
+        metadataString, // metadata
+        "Blockchain Events", // category
+        Math.floor(Date.now() / 1000) + 7200, // salesEndTime (1 hour from now)
+        { value: ethers.parseEther("10") }
+    );
+    await createTx.wait();
+
+    console.log("Event created successfully!");
+  } catch (error) {
+    console.error("Error creating event:", error);
+  }
+};
+
+export const registerForEvent = async (eventId, ticketPrice) => {
+  try {
+    const purchaseTx = await ticketPassContract.purchasePass(eventId, "ipfs://bafkreifjk5goeyyo4gfk36zoxw3nnn57hib55mntkqgjpgxti2lgrsg6la", {gasLimit: 2000000, gasPrice: ethers.parseUnits("50000000000000", "wei"), value: ethers.parseEther("10") });
+    await purchaseTx.wait();
+
+    console.log("Registered for event successfully!");
+  } catch (error) {
+    console.error("Error registering for event:", error);
+  }
+};
+
+export const fetchUserTickets = async () => {
+  try {
+    // Fetch tickets associated with the user's wallet address
+    let fetchedTickets = [];
+    const userPasses = await ticketPassContract.getUserPasses(signer.address);
+    console.log(`User passes:`, userPasses);
+    for (let i = 0; i < userPasses.length; i++) {
+        const event = await ticketPassContract.ticketPasses(userPasses[i]);
+        let metadata;
+      try {
+        metadata = JSON.parse(event.metadata);
+      } catch (error) {
+        console.error(`Invalid metadata for event ${i}:`, error);
+        continue; // Skip this event if metadata is not valid JSON
+      }
+      console.log(metadata)
+      const transformedEvent = {
+        id: userPasses[i], 
+        title: metadata.title, 
+        date: '9th Nov', 
+        startTime: event[7], 
+        endTime: event[8], 
+        location: metadata.location, 
+        imageUrl: metadata.media, 
+        description: metadata.description, 
+        category: event.category,  
+        moreInformation: metadata.moreInformation, 
+        ticketPrice: event[6], 
+        maxTickets: event[5], 
+        ticketsSold: event[4], 
+        registered: true,
+        host: event[0], 
+      };
+
+      fetchedTickets.push(transformedEvent);
+      console.log(`Pass ${i}:`, event);
+    }
+    return fetchedTickets;
+  } catch (error) {
+    console.error("Error fetching user tickets:", error);
+    throw error;
+  }
+};
