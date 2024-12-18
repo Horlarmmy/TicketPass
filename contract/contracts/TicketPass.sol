@@ -88,7 +88,7 @@ contract TicketPass is ExpiryHelper, KeyHelper, HederaTokenService {
         return createdToken;
     }
 
-    function purchasePass(uint256 _ticketPassId) external payable {
+    function purchasePass(uint256 _ticketPassId, string memory _metadata) external payable {
         ticketPassDetails memory pass = ticketPasses[_ticketPassId];
         require(msg.value >= pass.passPrice, "Insufficient payment");
         require(block.timestamp <= pass.salesEndTime, "Sales ended");
@@ -96,7 +96,7 @@ contract TicketPass is ExpiryHelper, KeyHelper, HederaTokenService {
         require(!pass.bpEnded, "Event ended");
 
         // Convert metadata from string to bytes
-        bytes memory metadataBytes = bytes(pass.metadata);
+        bytes memory metadataBytes = bytes(_metadata);
         bytes[] memory metadataArray = new bytes[](1);
         metadataArray[0] = metadataBytes;
 
