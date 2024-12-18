@@ -65,6 +65,9 @@ contract TicketPass is ExpiryHelper, KeyHelper, HederaTokenService {
         token.expiry = createAutoRenewExpiry(address(this), autoRenewPeriod); // Contract auto-renews the token
 
         (int responseCode, address createdToken) = createNonFungibleToken(token, msg.value);
+        if(responseCode != HederaResponseCodes.SUCCESS){
+            revert("Failed to create non-fungible token");
+        }
         
         // Store ticket pass details
         ticketPasses[ticketPassCount] = ticketPassDetails({
@@ -106,9 +109,9 @@ contract TicketPass is ExpiryHelper, KeyHelper, HederaTokenService {
 
         int txresponse = HederaTokenService.transferNFT(pass.tokenAddress, address(this), msg.sender, serial[0]);
 
-        // if(txresponse != HederaResponseCodes.SUCCESS){
-        //     revert("Failed to transfer non-fungible token");
-        // }
+        if(txresponse != HederaResponseCodes.SUCCESS){
+            revert("Failed to transfer non-fungible token");
+        }
 
         // Update passes sold
         ticketPasses[_ticketPassId].passesSold++;
