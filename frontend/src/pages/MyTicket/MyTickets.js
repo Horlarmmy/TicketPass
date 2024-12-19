@@ -20,9 +20,15 @@ const MyTickets = () => {
   useEffect(() => {
     const loadUserTickets = async () => {
       try {
-        const tickets = await fetchUserTickets();
+        const fetchedEvents = await fetchUserTickets();
+        console.log(fetchedEvents)
+        const combinedEvents = fetchedEvents.map((event, index) => ({
+          ...event,
+          imageUrl: localEvents[index]?.imageUrl || "", // Fallback to empty string if no imageUrl
+        }));
+        console.log(combinedEvents)
 
-        setUserTickets(tickets);
+        setUserTickets(combinedEvents);
       } catch (error) {
         console.error("Failed to load user tickets:", error);
       } finally {
@@ -111,7 +117,7 @@ const MyTickets = () => {
           <ul role="list" className="space-y-4">
             {userTickets.map((event) => (
               <li key={event.id} className="bg-white shadow-md rounded-lg p-4">
-                <Link href={`/event/${event.id}`} passHref>
+                <Link href={`/events/${event.id}`} passHref>
                   <div className="flex justify-between gap-x-6 py-5">
                     <div className="flex gap-x-4">
                       <Image
