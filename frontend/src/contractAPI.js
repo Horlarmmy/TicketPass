@@ -65,13 +65,15 @@ export const createEvent = async (
     };
 
     const metadataString = JSON.stringify(metadata);
+    const salesEndTime = Math.floor(new Date("2024-12-20T09:00:00Z").getTime() / 1000);
+    console.log(salesEndTime)
 
     const createTx = await ticketPassContract.createticketPass(
         formData.availableSeats, // maxPasses
         200000000n, // passPrice in ethers
         metadataString, // metadata
         "Blockchain Events", // category
-        Math.floor(Date.now() / 1000) + 7200, // salesEndTime (1 hour from now)
+        salesEndTime, // salesEndTime (1 hour from now)
         { value: ethers.parseEther("10") }
     );
     await createTx.wait();

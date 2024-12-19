@@ -187,7 +187,7 @@ const CreateEventForm = () => {
             min="0"
             required
             onChange={handleChange}
-            placeholder="e.g. 1NEAR"
+            placeholder="e.g. 1HBAR"
             className="mb-4 p-2 w-full border-2 border-gray-300 flex-auto rounded-md bg-white/5"
           />
 
