@@ -137,9 +137,15 @@ const MyTickets = () => {
                       </div>
                     </div>
                     <div className="hidden sm:flex flex-col items-end">
-                      <p className="text-sm text-gray-900">{event.date}</p>
+                      <p className="text-sm text-gray-900">{new Date(Number(event.endTime) * 1000).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                        })}</p>
                       <p className="text-xs text-gray-500">
-                        {event.startTime} - {event.endTime}
+                      {new Date(Number(event.endTime) * 1000).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                        })}
                       </p>
                     </div>
                   </div>

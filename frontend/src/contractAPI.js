@@ -1,11 +1,9 @@
-'use client';
 import { ethers } from "ethers";
 import { abi } from "./TicketPass.json";
 
 const contractAddress = '0xCa6cA1A7e23cc402bdC6C2e5AcE6B065168Bbbbc';
-const provider = new ethers.BrowserProvider(window.ethereum, "any");
+const provider = new ethers.BrowserProvider(window.ethereum);
 const signer = await provider.getSigner();
-console.log(signer)
 const ticketPassContract = new ethers.Contract(contractAddress, abi, signer);
 
 

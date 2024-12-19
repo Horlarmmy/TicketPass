@@ -151,11 +151,17 @@ const EventGallery = () => {
                   />
                   <div className="flex p-4">
                     <div className="flex-none mr-5 align-middle items-center">
-                      <p className="text-gray-500 font-semibold">
-                        {formatDate(event.date).split(" ")[0]}
+                    <p className="text-black font-semibold">
+                      {new Date(Number(event.endTime) * 1000).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                        }).split(" ")[0]}
                       </p>
                       <p className="text-black text-3xl font-bold">
-                        {formatDate(event.date).split(" ")[1]}
+                      {new Date(Number(event.endTime) * 1000).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                        }).split(" ")[1]}
                       </p>
                     </div>
                     <div className="flex-grow text-center flex flex-col justify-center">
