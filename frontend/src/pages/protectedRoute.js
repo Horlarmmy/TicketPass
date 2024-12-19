@@ -11,14 +11,15 @@ const ProtectedRoute = ({ children }) => {
   const [account, setAccount] = useState(null);
 
   useEffect(() => {
-    setIsClient(true);
+    // setIsClient(true);
 
     const checkMetaMaskConnection = async () => {
-      if (window.ethereum) {
+      if (typeof window !== "undefined" && window.ethereum) {
         try {
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          const accounts = await window.ethereum.request({ method: "eth_accounts" });
           if (accounts.length > 0) {
             setAccount(accounts[0]);
+            setIsClient(true);
             setIsWalletConnected(true);
           } else {
             router.push("/"); // Redirect to home if no wallet connected
