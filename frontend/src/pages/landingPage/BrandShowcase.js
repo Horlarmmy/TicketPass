@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-import logoNear from "../../assets/logos/near.png";
 import logoGoogle from "../../assets/logos/google.png";
 import logoStripe from "../../assets/logos/stripe.png";
 import logoYoutube from "../../assets/logos/youtube.png";
@@ -44,15 +43,7 @@ const BrandShowcase = () => {
             />
           </motion.div>
 
-          <motion.div whileHover={{ scale: 1.1 }}>
-            <Image
-              className="col-span-2 max-h-11  w-fit object-contain pl-16 lg:col-span-1"
-              src={logoNear}
-              alt="Near"
-              width={108}
-              height={40}
-            />
-          </motion.div>
+         
 
           <motion.div whileHover={{ scale: 1.1 }}>
             <Image
